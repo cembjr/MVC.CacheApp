@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Contato>
+
+@{
+    ViewData["Title"] = "Contatos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Novo" class="btn btn-primary">Novo</a>
+</p>
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telefone)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telefone)
+            </td>
+            <td>
+                <div class="text-right">
+                    <a asp-action="Detalhes" asp-route-id="@item.Id"><span class="btn btn-info fa fa-search"></span></a>                    
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

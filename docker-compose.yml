@@ -1,0 +1,53 @@
+version: "3.4"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: agenda_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=MYSQL_ROOT_PASSWORD123@
+      - MYSQL_DATABASE=Agenda
+      - MYSQL_USER=agenda
+      - MYSQL_PASSWORD=agenda@123
+    ports:
+      - 3306:3306
+    volumes:
+      - agenda_mysql:/var/lib/mysql
+      - ./src/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - agenda_network
+
+  redis:
+    image: redis
+    container_name: agenda_cache
+    ports:
+      - 6379:6379
+    networks:
+      - agenda_network
+
+  agenda-web:
+    image: cembjr/agenda-web:latest
+    container_name: agenda-web
+    build:
+      context: ./src/CacheApp.Web
+      dockerfile: Dockerfile
+    ports:
+      - "5180:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MySQLConnection:server=agenda_db
+      - "RedisConnection=agenda_cache,port: 6379"
+    networks:
+      - agenda_network
+    depends_on:
+      - mysql
+      - redis
+
+networks:
+  agenda_network:
+    name: agenda_network
+    driver: bridge
+
+volumes:
+  agenda_mysql:
+    driver: local
